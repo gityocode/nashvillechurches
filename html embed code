@@ -7,23 +7,21 @@
 <!-- Initialize Map -->
 <script>
 function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
+  const map = new google.maps.Map(document.getElementById('map'), {
     zoom: 11,
-    center: {lat: 36.1608183, lng: -86.7830144}, // Replace with the coordinates of your choice
-    mapId: '18bb2aceb768448d' // Replace with your Map ID
+    center: {lat: 36.1608183, lng: -86.7830144}, 
+    mapId: '18bb2aceb768448d' 
   });
 
   var markers = [];
+  var infoWindow = new google.maps.InfoWindow(); // Declare infoWindow here
 
-  // Load your GeoJSON data
-  fetch('https://raw.githubusercontent.com/gityocode/nashvillechurches/main/church_json%20(4).geojson')
+  fetch('https://raw.githubusercontent.com/gityocode/nashvillechurches/main/churches_updated%20(2).geojson')
     .then(function(response){
       return response.json();
     })
     .then(function(data){
-      // For each feature in the GeoJSON data...
       data.features.forEach(function(feature){
-        // Create a marker
         var marker = new google.maps.Marker({
           position: {
             lat: feature.geometry.coordinates[1],
@@ -32,28 +30,29 @@ function initMap() {
           map: map
         });
 
-// Create an information window
-var infoWindow = new google.maps.InfoWindow({
-  content: '<h3>' + feature.properties.church_name + '</h3>' +
-           '<p><b>Website:</b> ' + feature.properties.website + '</p>' +
-           '<p><b>Address:</b> ' + feature.properties.address + '</p>' +
-           '<p><b>Phone Number:</b> ' + feature.properties.phone_number + '</p>'
-});
-
-
-  // Add a click listener to the marker
-  marker.addListener('click', function() {
-    infoWindow.open(map, marker);
-  });
-
-        // And add it to the markers array
         markers.push(marker);
+
+        // Add a click listener for each marker
+        marker.addListener('click', function() {
+          // Close the current infoWindow
+          infoWindow.close();
+          
+          // Create new infoWindow content
+infoWindow.setContent('<h3>' + feature.properties.church_name + '</h3>' +
+  '<p><b>Website:</b> <a href="' + feature.properties.website + '" target="_blank" style="color:blue;">' + feature.properties.website + '</a></p>' +
+  '<p><b>Address:</b> ' + feature.properties.address + '</p>' +
+  '<p><b>Phone Number:</b> ' + feature.properties.phone_number + '</p>');
+
+          
+          // Open the infoWindow at the marker
+          infoWindow.open(map, marker);
+        });
       });
 
-      // Add marker clustering
       new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     });
 }
+
 </script>
 
 <!-- Your Map Container -->
