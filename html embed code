@@ -32,6 +32,20 @@ function initMap() {
           map: map
         });
 
+// Create an information window
+var infoWindow = new google.maps.InfoWindow({
+  content: '<h3>' + feature.properties.church_name + '</h3>' +
+           '<p><b>Website:</b> ' + feature.properties.website + '</p>' +
+           '<p><b>Address:</b> ' + feature.properties.address + '</p>' +
+           '<p><b>Phone Number:</b> ' + feature.properties.phone_number + '</p>'
+});
+
+
+  // Add a click listener to the marker
+  marker.addListener('click', function() {
+    infoWindow.open(map, marker);
+  });
+
         // And add it to the markers array
         markers.push(marker);
       });
