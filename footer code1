@@ -15,16 +15,6 @@
     const data = new google.maps.Data();
     data.loadGeoJson(geoJsonUrl);
     
-    // After initializing the map
-
-	// Assume `markers` is an array of your marker objects
-
-    // Create a new MarkerClusterer
-    var markerCluster = new MarkerClusterer(map, markers,
-        {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'}
-    );
-
-
     // Style the GeoJSON data
     data.setStyle({
       strokeColor: "#0E4C92",
