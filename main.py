@@ -35,17 +35,20 @@ def get_place_details(church_name):
   gmaps = Client(key=API_KEY)
   result = gmaps.places(query=f"{church_name} in Nashville")
 
-  if result["status"] == "OK":
-    place_id = result["results"][0].get("place_id")
-    lat_lng = result["results"][0]["geometry"]["location"]
-    address = result["results"][0].get("formatted_address")
+if result["status"] == "OK":
+        place_id = result["results"][0].get("place_id")
+        lat_lng = result["results"][0]["geometry"]["location"]
+        address = result["results"][0].get("formatted_address")
+        # remove country name from the address
+        address = ', '.join(address.split(', ')[:-1])
+        address_with_country = result["results"][0].get("formatted_address")
 
-    # Save to cache
-    api_cache[church_name] = (place_id, lat_lng, address)
-    save_cache(api_cache)
+        # Save to cache
+        api_cache[church_name] = (place_id, lat_lng, address, address_with_country)
+        save_cache(api_cache)
 
-    return place_id, lat_lng, address
-  return None, None, None
+        return place_id, lat_lng, address, address_with_country
+    return None, None, None, None
 
 
 def get_church_url_and_phone(place_id):
@@ -64,20 +67,20 @@ def get_church_url_and_phone(place_id):
 
 
 def write_geojson(churches):
-  geojson = {
-    "type":
-    "FeatureCollection",
-    "features": [{
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [church["longitude"], church["latitude"]]
-      },
-      "properties": church,
-    } for church in churches],
-  }
-  with open("church_json.geojson", "w") as f:
-    json.dump(geojson, f)
+geojson = {
+        "type":
+        "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [church["lng"], church["lat"]]  # note the change here
+            },
+            "properties": church,
+        } for church in churches],
+    }
+    with open("church_json.geojson", "w") as f:
+        json.dump(geojson, f)
 
 
 def main():
@@ -93,28 +96,29 @@ def main():
 
     churches = []
 
-    for row in reader:
-      church_name = row[0]
-      place_id, lat_lng, address = get_place_details(church_name)
+   for row in reader:
+        church_name = row[0]
+        place_id, lat_lng, address, address_with_country = get_place_details(church_name)  # note the change here
 
-      if lat_lng:
-        latitude, longitude = lat_lng["lat"], lat_lng["lng"]
-      else:
-        latitude, longitude = None, None
+        if lat_lng:
+            lat, lng = lat_lng["lat"], lat_lng["lng"]  # note the change here
+        else:
+            lat, lng = None, None  # note the change here
 
-      church_url, phone_number = get_church_url_and_phone(place_id)
+        church_url, phone_number = get_church_url_and_phone(place_id)
 
-      church = {
-        "church_name": church_name,
-        "website": church_url,
-        "place_id": place_id,
-        "latitude": latitude,
-        "longitude": longitude,
-        "address": address,
-        "phone_number": phone_number,
-        "last_updated": datetime.datetime.now().isoformat(),
-      }
-      churches.append(church)
+        church = {
+            "church_name": church_name,
+            "website": church_url,
+            "place_id": place_id,
+            "lat": lat,  # note the change here
+            "lng": lng,  # note the change here
+            "address": address,
+            "address_with_country": address_with_country,  # added this new property
+            "phone_number": phone_number,
+            "last_updated": datetime.datetime.now().isoformat(),
+        }
+        churches.append(church)
 
     # Write churches to a CSV file
     with open('church_data_output.csv', 'w', newline='') as outfile:
