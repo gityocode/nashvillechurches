@@ -1,0 +1,40 @@
+<script src="https://maps.googleapis.com/maps/api/js?key=[API KEY]v=weekly&callback=initMap" async defer></script>
+
+<script>
+  function initMap() {
+    const map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 11,
+      center: {lat: 36.1608183, lng: -86.7830144}, // coordinates for initial map center
+      mapId: '18bb2aceb768448d' // replace 'your-map-id' with your actual Map ID
+    });
+
+    // URL to your GeoJSON data
+    const geoJsonUrl = 'https://raw.githubusercontent.com/gityocode/nashvillechurches/main/church_json%20(4).geojson';
+
+    // Create a new Data object and load the GeoJSON data onto the map
+    const data = new google.maps.Data();
+    data.loadGeoJson(geoJsonUrl);
+    
+    // After initializing the map
+
+	// Assume `markers` is an array of your marker objects
+
+    // Create a new MarkerClusterer
+    var markerCluster = new MarkerClusterer(map, markers,
+        {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'}
+    );
+
+
+    // Style the GeoJSON data
+    data.setStyle({
+      strokeColor: "#0E4C92",
+      strokeWeight: 2,
+      strokeOpacity: 1,
+      fillColor: "#0E4C92",
+      fillOpacity: 0.3,
+    });
+
+    // Add the data to the map
+    data.setMap(map);
+  }
+</script>
