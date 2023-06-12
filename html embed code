@@ -16,7 +16,7 @@ function initMap() {
   var markers = [];
   var infoWindow = new google.maps.InfoWindow(); // Declare infoWindow here
 
-  fetch('https://raw.githubusercontent.com/gityocode/nashvillechurches/main/churches_updated%20(2).geojson')
+  fetch('https://raw.githubusercontent.com/gityocode/nashvillechurches/main/Places%20Data-Export%20to%20JSON.geojson')
     .then(function(response){
       return response.json();
     })
@@ -37,10 +37,10 @@ function initMap() {
           // Close the current infoWindow
           infoWindow.close();
           
-          // Create new infoWindow content
+					// Create new infoWindow content
 infoWindow.setContent('<h3>' + feature.properties.church_name + '</h3>' +
   '<p><b>Website:</b> <a href="' + feature.properties.website + '" target="_blank" style="color:blue;">' + feature.properties.website + '</a></p>' +
-  '<p><b>Address:</b> ' + feature.properties.address + '</p>' +
+  '<p><b>Address:</b> ' + feature.properties.GeoJSON_export_address + '</p>' +
   '<p><b>Phone Number:</b> ' + feature.properties.phone_number + '</p>');
 
           
@@ -56,4 +56,17 @@ infoWindow.setContent('<h3>' + feature.properties.church_name + '</h3>' +
 </script>
 
 <!-- Your Map Container -->
-<div id="map" style="width: 100%; height: 500px;"></div>
+<div id="map" style="width: 100%; height: 700px;"></div>
+
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#map {
+  height: 100%;
+}
+</style>
