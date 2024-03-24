@@ -1,6 +1,6 @@
 
 <!-- Include Google Maps JavaScript API -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmBnKTeHu-tkSurV2BBc22Rpt9XeEZOv8"></script>
+<script src="https://maps.googleapis.com/maps/api/js?GOOGLEMAPSAPI"></script>
 
 <!-- Include Marker Clusterer library -->
 <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
