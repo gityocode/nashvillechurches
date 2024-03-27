@@ -13,25 +13,21 @@
 function initMap() {
   const map = new google.maps.Map(document.getElementById('map'), {
     zoom: 11,
-    center: {lat: 36.161091, lng: -86.778514}, 
-    mapId: '18bb2aceb768448d' 
+    center: {lat: 36.161091, lng: -86.778514},
+    mapId: '18bb2aceb768448d'
   });
 
-  var markers = [];
-  var infoWindow = new google.maps.InfoWindow(); // Declare infoWindow here
+  var markers = []; // This will hold both church markers and potentially other markers
+  var infoWindow = new google.maps.InfoWindow(); // Create a single InfoWindow instance
 
-  fetch('https://storage.googleapis.com/sincere-chariot-355204.appspot.com/Places-Export%20to%20JSON%202023-12-12b.geojson')
-    .then(function(response){
+  // Load church data and create markers
+  fetch('https://storage.googleapis.com/sincere-chariot-355204.appspot.com/Places-Export%20to%20JSON2024-03-20b.geojson')
+    .then(function(response) {
       return response.json();
     })
-    .then(function(data){
-      data.features.forEach(function(feature){
-        // Create a div for the Font Awesome icon
-        var icon = document.createElement('div');
-        icon.innerHTML = '<i class="fas fa-church fa-lg"></i>';
-        icon.style.fontSize = '24px'; // Adjust icon size
-
-        // Create a marker with the Font Awesome icon
+    .then(function(data) {
+      data.features.forEach(function(feature) {
+        var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ic" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="TogetherDkBrn" d="M18 12.22V9l-5-2.5V5h2V3h-2V1h-2v2H9v2h2v1.5L6 9v3.22L2 14v8h9v-4c0-.55.45-1 1-1s1 .45 1 1v4h9v-8zM20 20h-5v-2.04c0-1.69-1.35-3.06-3-3.06s-3 1.37-3 3.06V20H4v-4.79l4-1.81v-3.35L12 8l4 2.04v3.35l4 1.81z"></path><circle cx="12" cy="12" r="1.5" fill="TogetherDkBrn"></circle></svg>';
         var marker = new google.maps.Marker({
           position: {
             lat: feature.geometry.coordinates[1],
@@ -39,8 +35,8 @@ function initMap() {
           },
           map: map,
           icon: {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(icon.outerHTML),
-            scaledSize: new google.maps.Size(30, 30) // Adjust icon size on the map
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon),
+            scaledSize: new google.maps.Size(30, 30)
           }
         });
 
@@ -48,24 +44,20 @@ function initMap() {
 
         // Add a click listener for each marker
         marker.addListener('click', function() {
-          // Close the current infoWindow
-          infoWindow.close();
-          
-          // Create new infoWindow content
           infoWindow.setContent('<h3>' + feature.properties.PlaceName + '</h3>' +
             '<p><b>Website:</b> <a href="' + feature.properties.website + '" target="_blank" style="color:blue;">' + feature.properties.website + '</a></p>' +
             '<p><b>Address:</b> ' + feature.properties.FullAddress + '</p>' +
             '<p><b>Phone Number:</b> ' + feature.properties.phone_number + '</p>' +
             '<p><i class="fas fa-map-marked-alt fa-lg"></i> <a href="' + feature.properties.GoogleMapsPlaceIDurl + '" target="_blank" style="color:blue;">Open in Google Maps</a></p>');
-          
-          // Open the infoWindow at the marker
           infoWindow.open(map, marker);
         });
       });
 
-      new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+      // Use MarkerClusterer to manage the markers
+      new MarkerClusterer(map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
     });
 }
+
 
 </script>
 
