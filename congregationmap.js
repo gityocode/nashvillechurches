@@ -1,4 +1,4 @@
-// Description: This file contains the code to display the map of the Nashville congregations in the Nashville
+// Description: This file contains the code to display the map of the Nashville congregations
 
  <!-- Include Google Maps JavaScript API -->
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmBnKTeHu-tkSurV2BBc22Rpt9XeEZOv8"></script>
