@@ -1,1 +1,79 @@
- //testing some random stuff
+// Description: This file contains the code to display the map of the Nashville congregations in the Nashville
+
+ <!-- Include Google Maps JavaScript API -->
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmBnKTeHu-tkSurV2BBc22Rpt9XeEZOv8"></script>
+
+<!-- Include Marker Clusterer library -->
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+
+<!-- Include Font Awesome library (updated to latest version) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Initialize Map -->
+<script>
+function initMap() {
+  const map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 11,
+    center: {lat: 36.161091, lng: -86.778514},
+    mapId: '18bb2aceb768448d'
+  });
+
+  var markers = []; // This will hold both church markers and potentially other markers
+  var infoWindow = new google.maps.InfoWindow(); // Create a single InfoWindow instance
+
+  // Load church data and create markers
+  //fetch('https://storage.googleapis.com/sincere-chariot-355204.appspot.com/Places-Export%20to%20JSON2024-03-20b.geojson')
+  fetch('https://srvzkmpeeybjehpjkzea.supabase.co/storage/v1/object/public/files/Places-Export%20to%20JSON2024-05.geojson?t=2024-05-16T21%3A18%3A43.934Z')
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      data.features.forEach(function(feature) {
+        var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ic" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="TogetherDkBrn" d="M18 12.22V9l-5-2.5V5h2V3h-2V1h-2v2H9v2h2v1.5L6 9v3.22L2 14v8h9v-4c0-.55.45-1 1-1s1 .45 1 1v4h9v-8zM20 20h-5v-2.04c0-1.69-1.35-3.06-3-3.06s-3 1.37-3 3.06V20H4v-4.79l4-1.81v-3.35L12 8l4 2.04v3.35l4 1.81z"></path><circle cx="12" cy="12" r="1.5" fill="TogetherDkBrn"></circle></svg>';
+        var marker = new google.maps.Marker({
+          position: {
+            lat: feature.geometry.coordinates[1],
+            lng: feature.geometry.coordinates[0]
+          },
+          map: map,
+          icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon),
+            scaledSize: new google.maps.Size(30, 30)
+          }
+        });
+
+        markers.push(marker);
+
+        // Add a click listener for each marker
+        marker.addListener('click', function() {
+          infoWindow.setContent('<h3>' + feature.properties.PlaceName + '</h3>' +
+            '<p><b>Website:</b> <a href="' + feature.properties.website + '" target="_blank" style="color:blue;">' + feature.properties.website + '</a></p>' +
+            '<p><b>Address:</b> ' + feature.properties.FullAddress + '</p>' +
+            '<p><b>Phone Number:</b> ' + feature.properties.phone_number + '</p>' +
+            '<p><i class="fas fa-map-marked-alt fa-lg"></i> <a href="' + feature.properties.GoogleMapsPlaceIDurl + '" target="_blank" style="color:blue;">Open in Google Maps</a></p>');
+          infoWindow.open(map, marker);
+        });
+      });
+
+      // Use MarkerClusterer to manage the markers
+      new MarkerClusterer(map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+    });
+}
+
+
+</script>
+
+<!-- Your Map Container -->
+<div id="map" style="width: 100%; height: 700px;"></div>
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#map {
+  height: 100%;
+}
+</style>
